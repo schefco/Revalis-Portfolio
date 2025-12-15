@@ -35,7 +35,7 @@ uvicorn main:app --reload
 Open the WPF solution in Visual Studio and build/run the project.
 
 📸 Screenshots
-(Add recruiter-facing screenshots or GIFs here to showcase the dashboard polish.)
+Coming soon ...
 
 📄 License
 
