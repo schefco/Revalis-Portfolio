@@ -1,0 +1,184 @@
+﻿<UserControl x:Class="Revalis.Views.GameListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:Revalis.Models"
+             xmlns:views="clr-namespace:Revalis.Views"
+             xmlns:converters="clr-namespace:Revalis.Converters"
+             xmlns:local="clr-namespace:Revalis"
+             xmlns:vm="clr-namespace:Revalis.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:Revalis.Behaviors"
+             Loaded="UserControl_Loaded"
+             mc:Ignorable="d"
+             d:DesignHeight="600"
+             d:DesignWidth="800"
+             Height="Auto"
+             Width="Auto"
+             MinHeight="600"
+             MinWidth="1000"
+             Background="#1e1e1e">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Buttons row -->
+            <RowDefinition Height="Auto"/> <!-- Search Bar -->
+            <RowDefinition Height="*"/> <!-- Game list row -->
+        </Grid.RowDefinitions>
+
+        <!-- CRUD Buttons -->
+        <Border Background="#2d2d2d" Padding="10" Margin="10" Grid.Row="0">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                    <Button Content="➕ Add Game"
+                            Width="100"
+                            Margin="0 0 10 0"
+                            Command="{Binding AddGameCommand}"/>
+                    <Button Content="✏ Update Game"
+                            Width="120"
+                            Margin="0 0 10 0"
+                            Command="{Binding UpdateGameCommand}"
+                            IsEnabled="{Binding SelectedGame, Converter={StaticResource NullToBoolConverter}}"/>
+                    <Button Content="🗑 Delete Game"
+                            Width="120"
+                            Command="{Binding DeleteGameCommand}"
+                            IsEnabled="{Binding SelectedGame, Converter={StaticResource NullToBoolConverter}}"/>
+                </StackPanel>
+                </StackPanel>
+        </Border>
+
+
+        <Border Background="#2d2d2d" Padding="10" Margin="10" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBox Width="200"
+                         Margin="0 0 10 0"
+                         Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Search by game name"/>
+                <ComboBox Width="150"
+                          Margin="0 0 10 0"
+                          ItemsSource="{Binding Genres}"
+                          SelectedItem="{Binding SelectedGenre}"
+                          DisplayMemberPath="Name"
+                          ToolTip="Filter by genre"/>
+                <ComboBox Width="150"
+                          Margin="0 0 10 0"
+                          ItemsSource="{Binding Platforms}"
+                          SelectedItem="{Binding SelectedPlatform}"
+                          DisplayMemberPath="Name"
+                          ToolTip="Search by platform"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
+                    <TextBlock Text="Rating: " 
+                               Foreground="White" 
+                               VerticalAlignment="Center" 
+                               Margin="0 0 5 0"/>
+                    <TextBox Width="50"
+                             Text="{Binding MinRating, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Min rating"/>
+                    <TextBlock Text="-"
+                               Foreground="White"
+                               VerticalAlignment="Center"
+                               Margin="5 0"/>
+                    <TextBox Width="50"
+                             Text="{Binding MaxRating, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Max rating"/>
+                </StackPanel>
+
+                <ComboBox Width="120"
+                          Margin="0 0 10 0"
+                          SelectedItem="{Binding SelectedSort}"
+                          ToolTip="Sort by">
+                    <ComboBoxItem Content="Name"/>
+                    <ComboBoxItem Content="Released"/>
+                    <ComboBoxItem Content="Rating"/>
+                </ComboBox>
+
+                <Button Content="🔍 Search"
+                        Width="100"
+                        Command="{Binding SearchCommand}"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <ContentControl Content="{Binding CurrentView}">
+                <ContentControl.Resources>
+                    <!-- List view template -->
+                    <DataTemplate DataType="{x:Type vm:GameListViewModel}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="400"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Game Cards -->
+                            <ListBox x:Name="GameListBox"
+                                     Grid.Column="0"
+                                     ItemsSource="{Binding Games}"
+                                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                     Background="Transparent"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     VirtualizingStackPanel.IsVirtualizing="True"
+                                     ScrollViewer.CanContentScroll="True"
+                                     behaviors:ScrollViewerBehavior.LoadMoreCommand="{Binding LoadMoreGamesCommand}">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <local:VirtualizingWrapPanel ItemWidth="200" ItemHeight="300" ItemMargin="10"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Margin" Value="10"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+
+                                <ListBox.Resources>
+                                    <!-- Game card template -->
+                                    <DataTemplate DataType="{x:Type models:GameDTO}">
+                                        <Border BorderBrush="#444" BorderThickness="1" CornerRadius="6"
+                                                Background="#2d2d2d" Padding="10">
+                                            <StackPanel>
+                                                <Image Source="{Binding CoverImageUrl}" Height="180" Stretch="UniformToFill"/>
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" FontSize="14" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding Released}" FontStyle="Italic" Foreground="LightGray" FontSize="12"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="⭐" Foreground="Gold" FontSize="14"/>
+                                                    <TextBlock Text="{Binding Rating}" Foreground="White" FontSize="12"/>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding GenresDisplay}" Foreground="LightGray" FontSize="12"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+
+                                    <!-- Loading item template -->
+                                    <DataTemplate DataType="{x:Type models:LoadingItem}">
+                                        <Border Width="200" Height="300" Background="Transparent" IsHitTestVisible="False">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <ProgressBar IsIndeterminate="True" Width="100" Height="10"/>
+                                                <TextBlock Text="Loading more games..." Margin="10 0 0 0" Foreground="White"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.Resources>
+                            </ListBox>
+
+                            <!-- Flyout detail view -->
+                            <Border Grid.Column="1" Background="#1e1e1e" VerticalAlignment="Stretch" Padding="10">
+                                <views:GameDetailView SelectedGame="{Binding SelectedGame}"/>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+
+                    <!-- Full detail view template -->
+                    <DataTemplate DataType="{x:Type vm:GameFullDetailViewModel}">
+                        <views:GameFullDetailView/>
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</UserControl>

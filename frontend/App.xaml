@@ -1,0 +1,12 @@
+﻿<Application x:Class="Revalis.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:Revalis.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
+        <converters:IconPathConverter x:Key="IconPathConverter"/>
+        <converters:BoolToUnlockedConverter x:Key="BoolToUnlockedConverter"/>
+    </Application.Resources>
+</Application>
