@@ -1,0 +1,123 @@
+# 🦅 Revalis
+
+**Revalis** is a portfolio project that demonstrates my ability to design and build a modern backend service.  
+It connects to the RAWG Video Games Database to search, import, and store video game data, while also allowing custom entries.  
+
+- Built with **FastAPI**, **SQLAlchemy**, and **Pydantic**  
+- Uses **SQLite** for simplicity and portability (runs anywhere with Python)  
+- Clean, well‑structured code that follows professional backend practices  
+- Interactive API docs available at `/docs`  
+
+This project highlights my skills in:
+- API design and integration with third‑party services  
+- Database modeling and CRUD operations  
+- Data validation and clean JSON responses  
+- Organizing code for clarity and maintainability  
+
+---
+
+## ⚡ Quick Start (2 Minutes)
+
+1. **Clone & enter the project**
+   ```bash
+   git clone https://github.com/yourusername/revalis.git
+   cd revalis
+   ```
+
+2. **Create a virtual environment & install dependencies**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # Mac/Linux
+   venv\Scripts\activate      # Windows
+   pip install -r requirements.txt
+   ```
+
+3. **Add your API keys**  
+   Create a `.env` file in the project root:
+   ```
+   RAWG_API_KEY=your_rawg_api_key
+   APP_API_KEY=your_custom_api_key
+   ```
+
+4. **Run the server**
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+5. **Open the docs**  
+   Visit [http://localhost:8000/docs](http://localhost:8000/docs) for interactive Swagger UI.
+
+✅ That’s it — you can now search, import, and manage games through the Revalis API.
+
+---
+
+## ✨ Features
+- **Search games** via RAWG API (`/search`)
+- **Import games** into a local SQLite database (`/import`)
+- **List stored games** (`/games`)
+- **Add custom games** manually (`/games` POST)
+- **Duplicate handling** to prevent redundant entries
+- **Portable setup** — runs anywhere with Python, no external DB required
+
+---
+
+## 🛠️ Tech Stack
+- **FastAPI** – modern Python web framework
+- **SQLAlchemy** – ORM for database models
+- **Pydantic** – request/response validation
+- **SQLite** – lightweight, file‑based database
+- **httpx** – async HTTP client for RAWG API
+
+---
+
+## 📡 API Endpoints
+
+| Method | Endpoint       | Description                          |
+|--------|----------------|--------------------------------------|
+| GET    | `/games`       | List all stored games                |
+| POST   | `/games`       | Add a custom game                    |
+| GET    | `/search`      | Search RAWG API (no DB storage)      |
+| POST   | `/import`      | Import games from RAWG into database |
+
+---
+
+## 🧪 Example Request
+
+**POST /games**
+```json
+{
+  "name": "Test Game",
+  "released": "2025-01-01",
+  "rating": "4.5",
+  "platforms": "PC",
+  "genres": "Action"
+}
+```
+
+---
+
+## 📂 Project Structure
+```
+app/
+ ├── db.py          # Database engine & Base
+ ├── models.py      # SQLAlchemy models
+ ├── schemas.py     # Pydantic schemas
+ ├── crud.py        # Database operations
+ ├── rawg_client.py # RAWG API integration
+ ├── api.py         # Routes
+ └── main.py        # FastAPI entrypoint
+```
+
+---
+
+## 💡 Notes
+- Uses **SQLite** for simplicity and portability.  
+- Code is **database‑agnostic** — switch to PostgreSQL/MySQL by updating `DATABASE_URL`.  
+
+---
+
+## 📜 License
+MIT License
+```
+
+---
